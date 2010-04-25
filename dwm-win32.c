@@ -145,6 +145,8 @@ static void setborder(Client *c, bool border);
 static void setvisibility(HWND hwnd, bool visibility);
 static void setlayout(const Arg *arg);
 static void setmfact(const Arg *arg);
+static void setmcount(const Arg *arg);
+static void setnmcolumn(const Arg *arg);
 static void setup(HINSTANCE hInstance);
 static void setupbar(HINSTANCE hInstance);
 static void showclientclassname(const Arg *arg); 
@@ -153,6 +155,7 @@ static void spawn(const Arg *arg);
 static void tag(const Arg *arg);
 static int textnw(const char *text, unsigned int len);
 static void tile(void);
+static void htile(void);
 static void togglebar(const Arg *arg);
 static void toggleborder(const Arg *arg);
 static void toggleexplorer(const Arg *arg);
@@ -955,6 +958,32 @@ setmfact(const Arg *arg) {
 }
 
 void
+setmcount(const Arg *arg) {
+	int i;
+
+	if(!arg || !lt[sellt]->arrange)
+		return;
+	i = mcount + arg->i;
+	if (i < 1)
+		return;
+	mcount = i;
+	arrange();
+}
+
+void
+setnmcolumn(const Arg *arg) {
+	int i;
+
+	if(!arg || !lt[sellt]->arrange)
+		return;
+	i = nmcolumn + arg->i;
+	if (i < 1)
+		return;
+	nmcolumn = i;
+	arrange();
+}
+
+void
 setup(HINSTANCE hInstance) {
 
 	unsigned int i;
@@ -1129,35 +1158,116 @@ textnw(const char *text, unsigned int len) {
 
 void
 tile(void) {
-	int x, y, h, w, mw;
-	unsigned int i, n;
+
+	int x, y, h, w, mw, mn;
+	unsigned int i, j, n;
+	unsigned int nmc, nmr[nmcolumn];
 	Client *c;
 
 	for(n = 0, c = nexttiled(clients); c; c = nexttiled(c->next), n++);
 	if(n == 0)
 		return;
 
-	/* master */
-	c = nexttiled(clients);
-	mw = mfact * ww;
-	resize(c, wx, wy, (n == 1 ? ww : mw) - 2 * c->bw, wh - 2 * c->bw);
-
-	if(--n == 0)
-		return;
-
-	/* tile stack */
-	x = (wx + mw > c->x + c->w) ? c->x + c->w + 2 * c->bw : wx + mw;
+	/* masters */
+	x = wx;
 	y = wy;
-	w = (wx + mw > c->x + c->w) ? wx + ww - x : ww - mw;
-	h = wh / n;
-	if(h < bh)
-		h = wh;
-
-	for(i = 0, c = nexttiled(c->next); c; c = nexttiled(c->next), i++) {
-		resize(c, x, y, w - 2 * c->bw, /* remainder */ ((i + 1 == n)
+	mw = (n <= mcount ? ww : mfact * ww);
+	mn = MIN(n, mcount);
+	h = wh / mn;
+	for(i = 0, c = nexttiled(clients); i < mn; c = nexttiled(c->next), i++) {
+		resize(c, x, y, mw - 2 * c->bw, /* remainder */ ((i + 1 == mn)
 		       ? wy + wh - y - 2 * c->bw : h - 2 * c->bw));
 		if(h != wh)
 			y = c->y + HEIGHT(c);
+		n--;
+	}
+	if(n == 0)
+		return;
+
+	/* now c is the top window of tile stacks */
+
+	nmc = MIN(n, nmcolumn);
+	j = n / nmc;
+	for(i = 0; i < nmc; i++)
+		nmr[i] = j;
+	j = n % nmc;
+	for(i = 0; i < j; i++)
+		nmr[nmc - 1 - i]++;
+
+	x = wx + mw;
+	w = (ww - mw) / nmc;
+	for(i = 0; i < nmc; i++) {
+		y = wy;
+		h = wh / nmr[i];
+		if(h < bh)
+			h = wh; 
+
+		for(j = 0; j < nmr[i]; c = nexttiled(c->next), j++) {
+			resize(c, x, y, w - 2 * c->bw, /* remainder */ ((j + 1 == nmr[i])
+		       		? wy + wh - y - 2 * c->bw : h - 2 * c->bw));
+			if(h != wh)
+				y = c->y + HEIGHT(c);
+		}
+
+		x += w;
+	}
+}
+
+
+void
+htile(void) {
+
+	int x, y, h, w, mh, mn;
+	unsigned int i, j, n;
+	unsigned int nmc, nmr[nmcolumn];
+	Client *c;
+
+	for(n = 0, c = nexttiled(clients); c; c = nexttiled(c->next), n++);
+	if(n == 0)
+		return;
+
+	/* masters */
+	x = wx;
+	y = wy;
+	mh = (n <= mcount ? wh : mfact * wh);
+	mn = MIN(n, mcount);
+	w = ww / mn;
+	for(i = 0, c = nexttiled(clients); i < mn; c = nexttiled(c->next), i++) {
+		resize(c, x, y, /* remainder */ ((i + 1 == mn)
+					? wx + ww - x - 2 * c->bw : w - 2 * c->bw), mh - 2 * c->bw);
+		if(w != ww)
+			x = c->x + WIDTH(c);
+		n--;
+	}
+	if(n == 0)
+		return;
+
+	/* now c is the top window of tile stacks */
+
+	nmc = MIN(n, nmcolumn);
+	j = n / nmc;
+	for(i = 0; i < nmc; i++)
+		nmr[i] = j;
+	j = n % nmc;
+	for(i = 0; i < j; i++)
+		nmr[nmc - 1 - i]++;
+
+	y = wy + mh;
+	h = (wh - mh) / nmc;
+	for(i = 0; i < nmc; i++) {
+		x = wx;
+		w = ww / nmr[i];
+		if(w < bh) /* I don't undersand this */
+			w = ww; 
+
+		for(j = 0; j < nmr[i]; c = nexttiled(c->next), j++) {
+			resize(c, x, y, /* remainder */ ((j + 1 == nmr[i])
+					? wx + ww - y - 2 * c->bw : w - 2 * c->bw), h - 2 * c->bw);
+			if(w != ww)
+				x = c->x + WIDTH(c);
+		}
+
+		y += h;
 	}
 }
 

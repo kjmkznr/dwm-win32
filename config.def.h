@@ -24,12 +24,15 @@ static Rule rules[] = {
 
 /* layout(s) */
 static float mfact      = 0.55; /* factor of master area size [0.05..0.95] */
+static unsigned int mcount = 1; /* windows of master area [1,] */
+static unsigned int nmcolumn = 1; /* columns of non-master area [1,] */
 
 static Layout layouts[] = {
 	/* symbol     arrange function */
 	{ "[]=",      tile },    /* first entry is default */
 	{ "><>",      NULL },    /* no layout function means floating behavior */
 	{ "[M]",      monocle },
+	{ "|=|",      htile},	 /* 'horizontal' tile */
 };
 
 /* key definitions */
@@ -54,6 +57,10 @@ static Key keys[] = {
 	{ MODKEY,                       'K',       focusstack,          {.i = -1 } },
 	{ MODKEY,                       'H',       setmfact,            {.f = -0.05} },
 	{ MODKEY,                       'L',       setmfact,            {.f = +0.05} },
+	{ MODKEY|MOD_SHIFT,		'H',	   setmcount,		{.i = +1} },
+	{ MODKEY|MOD_SHIFT,		'L',	   setmcount,		{.i = -1} },
+	{ MODKEY|MOD_CONTROL,		'H',	   setnmcolumn,		{.i = +1} },
+	{ MODKEY|MOD_CONTROL,		'L',	   setnmcolumn,		{.i = -1} },
 	{ MODKEY,                       'I',       showclientclassname, {0} },
 	{ MODKEY,                       VK_RETURN, zoom,                {0} },
 	{ MODKEY,                       VK_TAB,    view,                {0} },
@@ -61,6 +68,7 @@ static Key keys[] = {
 	{ MODKEY,                       'T',       setlayout,           {.v = &layouts[0]} },
 	{ MODKEY,                       'F',       setlayout,           {.v = &layouts[1]} },
 	{ MODKEY,                       'M',       setlayout,           {.v = &layouts[2]} },
+	{ MODKEY,			'Y',	   setlayout,		{.v = &layouts[3]} },
 	{ MODKEY,                       VK_SPACE,  setlayout,           {0} },
 	{ MODKEY|MOD_SHIFT,             VK_SPACE,  togglefloating,      {0} },
 	{ MODKEY,                       'N',       toggleborder,        {0} },
