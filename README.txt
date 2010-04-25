@@ -43,6 +43,9 @@ Usage
   MOD + e
    - Toogles windows explorer and taskbar on and off.
 
+  MOD + c
+   - Toogles clock on and off.
+
   MOD + t
    - Sets tiled layout.
 
@@ -51,6 +54,9 @@ Usage
 
   MOD + m
    - Sets monocle layout.
+
+  MOD + y
+   - Sets horizontal tiled layout.
 
   MOD + space
    - Toggles between current and previous layout.
@@ -66,6 +72,18 @@ Usage
 
   MOD + l
    - Increase master area size.
+
+  MOD + Shift + h
+   - Increase master area window.
+
+  MOD + Shift + l
+   - Increase master area window.
+
+  MOD + Control + h
+   - Decrease master area window.
+
+  MOD + Control + l
+   - Decrease master area window.
 
   MOD + Return
    - Zooms/cycles focused window to/from master area (tiled layouts only).
