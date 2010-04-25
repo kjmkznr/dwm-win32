@@ -12,6 +12,7 @@ static const unsigned int borderpx    = 2;        /* border pixel of windows */
 static const unsigned int textmargin  = 5;        /* margin for the text displayed on the bar */
 static bool showbar                   = true;     /* false means no bar */
 static bool topbar                    = true;     /* false means bottom bar */
+static bool showclock                 = true;     /* false means no clock */
 
 /* tagging */
 static const char tags[][MAXTAGLEN] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
@@ -104,3 +105,6 @@ static Button buttons[] = {
 	{ ClkTagBar,            WM_LBUTTONDOWN,       0,               view,           {0} },
 	{ ClkTagBar,            WM_RBUTTONDOWN,       0,               toggleview,     {0} },
 };
+
+static char clockfmt[] = "%Y/%m/%d(%a) %H:%M";
+static int clock_intval = 15000;
