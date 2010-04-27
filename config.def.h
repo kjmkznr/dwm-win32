@@ -76,7 +76,7 @@ static Key keys[] = {
 	{ MODKEY,                       'E',       toggleexplorer,      {0} },
 	{ MODKEY,                       '0',       view,                {.ui = ~0 } },
 	{ MODKEY|MOD_SHIFT,             '0',       tag,                 {.ui = ~0 } },
-	{ MODKEY,                       "C",       toggleclock,         {0} },
+	{ MODKEY,                       'C',       toggleclock,         {0} },
 	TAGKEYS(                        '1',                            0)
 	TAGKEYS(                        '2',                            1)
 	TAGKEYS(                        '3',                            2)

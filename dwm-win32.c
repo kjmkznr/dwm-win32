@@ -159,6 +159,7 @@ static void tile(void);
 static void htile(void);
 static void togglebar(const Arg *arg);
 static void toggleborder(const Arg *arg);
+static void toggleclock(const Arg *arg);
 static void toggleexplorer(const Arg *arg);
 static void togglefloating(const Arg *arg);
 static void toggletag(const Arg *arg);
@@ -1325,6 +1326,7 @@ void
 toggleclock(const Arg *arg) {
 	showclock = !showclock;
 	updatebar();
+	arrange();		
 }
 
 void
