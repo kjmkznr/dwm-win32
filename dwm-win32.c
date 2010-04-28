@@ -1282,7 +1282,7 @@ htile(void) {
 
 		for(j = 0; j < nmr[i]; c = nexttiled(c->next), j++) {
 			resize(c, x, y, /* remainder */ ((j + 1 == nmr[i])
-					? wx + ww - y - 2 * c->bw : w - 2 * c->bw), h - 2 * c->bw);
+					? wx + ww - x - 2 * c->bw : w - 2 * c->bw), h - 2 * c->bw);
 			if(w != ww)
 				x = c->x + WIDTH(c);
 		}
