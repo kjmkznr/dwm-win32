@@ -136,6 +136,8 @@ static void grabkeys(HWND hwnd);
 static void killclient(const Arg *arg);
 static Client *manage(HWND hwnd);
 static void monocle(void);
+static void movetonext(const Arg *arg);
+static void movetoprev(const Arg *arg);
 static Client *nextchild(Client *p, Client *c);
 static Client *nexttiled(Client *c);
 static void quit(const Arg *arg);
@@ -730,6 +732,72 @@ monocle(void) {
 	for(c = nexttiled(clients); c; c = nexttiled(c->next)) {
 		resize(c, wx, wy, ww - 2 * c->bw, wh - 2 * c->bw);
 	}
+}
+
+void
+movetonext(const Arg *arg) {
+	Client *p, *n;
+
+	if(!(p = clients))
+		return;
+	for(; p && (p->next != sel); p = p->next);
+
+	n = sel->next;
+
+	if(!n) {
+		/* sel is the last one */
+		zoom(NULL);
+		return;
+	}
+
+	sel->next = n->next;
+	n->next = sel;
+	
+	if(!p) {
+		/* sel is the first one */
+		clients = n;
+	} else {
+		p->next = n;
+	}
+
+	arrange();
+}
+
+void
+movetoprev(const Arg *arg) {
+	Client *pp, *p;
+
+	if(!(pp = clients) | !(p = pp->next))
+		return;
+
+	if(sel == pp) {
+		/* 
+		 * sel is the first one;
+		 * there're at least 2 windows
+		 */
+		Client *l;
+		for(l = p; l->next; l = l->next);
+
+		l->next = sel;
+		sel->next = NULL;
+		clients = p;
+
+	} else if(sel == p) {
+		/* sel is the second one */
+		pp->next = sel->next; /* even if it equals NULL */
+		sel->next = pp;
+		clients = sel;
+
+	} else {
+		for(; p && (p->next != sel);
+				pp = pp->next, p = p->next);
+
+		p->next = sel->next;
+		sel->next = p;
+		pp->next = sel;
+	}
+
+	arrange();
 }
 
 Client *

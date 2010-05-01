@@ -88,6 +88,12 @@ Usage
   MOD + Return
    - Zooms/cycles focused window to/from master area (tiled layouts only).
 
+  MOD + Shift + j
+   - Switch focused window with the next one.
+
+  MOD + Shift + k
+   - Switch focused window with the prevoius one.
+
   MOD + Shift + c
    - Close focused window.
 
