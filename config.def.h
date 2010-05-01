@@ -64,6 +64,8 @@ static Key keys[] = {
 	{ MODKEY|MOD_CONTROL,		'L',	   setnmcolumn,		{.i = -1} },
 	{ MODKEY,                       'I',       showclientclassname, {0} },
 	{ MODKEY,                       VK_RETURN, zoom,                {0} },
+	{ MODKEY|MOD_SHIFT,		'J',	   movetonext,		{0} },
+	{ MODKEY|MOD_SHIFT,		'K',	   movetoprev,		{0} },
 	{ MODKEY,                       VK_TAB,    view,                {0} },
 	{ MODKEY|MOD_SHIFT,             'C',       killclient,          {0} },
 	{ MODKEY,                       'T',       setlayout,           {.v = &layouts[0]} },
